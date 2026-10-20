@@ -5,6 +5,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -492,11 +497,19 @@ fun ColumnScope.SlotBackupsContent(
             }
         }
     } else {
+        val isRunning = backupsViewModel.isRefreshing || backupsViewModel.wasRestored == null
+        val isSuccess = backupsViewModel.wasRestored
         FlashList(
             cardTitle = stringResource(R.string.restore),
-            output = backupsViewModel.restoreOutput
+            output = backupsViewModel.restoreOutput,
+            isRunning = isRunning,
+            isSuccess = isSuccess
         ) {
-            AnimatedVisibility(!backupsViewModel.isRefreshing && backupsViewModel.wasRestored != null) {
+            AnimatedVisibility(
+                visible = !isRunning && isSuccess != null,
+                enter = fadeIn(tween(220)) + expandVertically(tween(240)),
+                exit = fadeOut(tween(180)) + shrinkVertically(tween(200))
+            ) {
                 Column {
                     if (backupsViewModel.wasRestored != false) {
                         Button(

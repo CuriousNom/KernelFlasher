@@ -35,6 +35,7 @@ import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.material.icons.rounded.PowerSettingsNew
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material.icons.rounded.SystemUpdate
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -44,6 +45,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -57,6 +59,7 @@ import androidx.navigation.NavController
 import com.github.capntrips.kernelflasher.R
 import com.github.capntrips.kernelflasher.ui.components.Card
 import com.github.capntrips.kernelflasher.ui.components.SlotCard
+import com.github.capntrips.kernelflasher.ui.components.pressScale
 import kotlinx.serialization.ExperimentalSerializationApi
 
 @ExperimentalMaterial3Api
@@ -286,10 +289,13 @@ fun ColumnScope.MainContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // Backups
+                val backupsSource = remember { MutableInteractionSource() }
                 FilledTonalButton(
                     modifier = Modifier
                         .weight(1f)
-                        .height(44.dp),
+                        .height(44.dp)
+                        .pressScale(backupsSource, scaleDown = 0.95f),
+                    interactionSource = backupsSource,
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -312,10 +318,13 @@ fun ColumnScope.MainContent(
                 }
 
                 // Updates
+                val updatesSource = remember { MutableInteractionSource() }
                 FilledTonalButton(
                     modifier = Modifier
                         .weight(1f)
-                        .height(44.dp),
+                        .height(44.dp)
+                        .pressScale(updatesSource, scaleDown = 0.95f),
+                    interactionSource = updatesSource,
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -338,10 +347,13 @@ fun ColumnScope.MainContent(
                 }
 
                 // Reboot
+                val rebootSource = remember { MutableInteractionSource() }
                 FilledTonalButton(
                     modifier = Modifier
                         .weight(1f)
-                        .height(44.dp),
+                        .height(44.dp)
+                        .pressScale(rebootSource, scaleDown = 0.95f),
+                    interactionSource = rebootSource,
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,

@@ -5,6 +5,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,6 +71,7 @@ import com.github.capntrips.kernelflasher.ui.components.DataCard
 import com.github.capntrips.kernelflasher.ui.components.FlashButton
 import com.github.capntrips.kernelflasher.ui.components.FlashList
 import com.github.capntrips.kernelflasher.ui.components.SlotCard
+import com.github.capntrips.kernelflasher.ui.components.bouncyClickable
 import kotlinx.serialization.ExperimentalSerializationApi
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -121,7 +127,7 @@ fun ColumnScope.SlotFlashContent(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
+                        .bouncyClickable {
                             mainActivity.isAwaitingResult = true
                             ak3Launcher.launch("*/*")
                         },
@@ -182,7 +188,7 @@ fun ColumnScope.SlotFlashContent(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navController.navigate("slot$slotSuffix/flash/image") },
+                        .bouncyClickable { navController.navigate("slot$slotSuffix/flash/image") },
                     shape = RoundedCornerShape(18.dp),
                     color = MaterialTheme.colorScheme.secondaryContainer
                 ) {
@@ -345,13 +351,21 @@ fun ColumnScope.SlotFlashContent(
             }
         }
     } else {
+        val isRunning = viewModel.isRefreshing || viewModel.wasFlashSuccess == null
+        val isSuccess = viewModel.wasFlashSuccess
         FlashList(
             cardTitle = stringResource(
                 if (currentRoute.endsWith("/backup/backup")) R.string.backup else R.string.flash
             ),
-            output = if (currentRoute.contains("ak3")) viewModel.uiPrintedOutput else viewModel.flashOutput
+            output = if (currentRoute.contains("ak3")) viewModel.uiPrintedOutput else viewModel.flashOutput,
+            isRunning = isRunning,
+            isSuccess = isSuccess
         ) {
-            AnimatedVisibility(!viewModel.isRefreshing && viewModel.wasFlashSuccess != null) {
+            AnimatedVisibility(
+                visible = !isRunning && isSuccess != null,
+                enter = fadeIn(tween(220)) + expandVertically(tween(240)),
+                exit = fadeOut(tween(180)) + shrinkVertically(tween(200))
+            ) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     if (currentRoute.contains("ak3")) {
                         FilledTonalButton(

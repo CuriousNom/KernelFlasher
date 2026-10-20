@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.github.capntrips.kernelflasher.R
 import com.github.capntrips.kernelflasher.ui.components.DataCard
+import com.github.capntrips.kernelflasher.ui.components.bouncyClickable
 
 @ExperimentalMaterial3Api
 @Suppress("UnusedReceiverParameter")
@@ -175,6 +176,6 @@ private fun RebootColorfulItem(
             )
         },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-        modifier = Modifier.clickable(onClick = onClick)
+        modifier = Modifier.bouncyClickable(scaleDown = 0.98f, onClick = onClick)
     )
 }

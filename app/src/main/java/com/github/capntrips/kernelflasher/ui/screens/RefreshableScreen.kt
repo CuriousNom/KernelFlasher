@@ -1,8 +1,12 @@
 package com.github.capntrips.kernelflasher.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +50,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -55,6 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.github.capntrips.kernelflasher.R
+import com.github.capntrips.kernelflasher.ui.components.pressScale
 import com.github.capntrips.kernelflasher.ui.screens.main.MainViewModel
 import kotlinx.serialization.ExperimentalSerializationApi
 
@@ -98,22 +104,26 @@ fun RefreshableScreen(
                             .fillMaxHeight()
                     ) {
                         if (navController.previousBackStackEntry != null) {
+                            val backSource = remember { MutableInteractionSource() }
                             AnimatedVisibility(
                                 visible = !viewModel.isRefreshing,
-                                enter = fadeIn(),
-                                exit = fadeOut(),
+                                enter = fadeIn(tween(180)) + scaleIn(initialScale = 0.85f, animationSpec = tween(180)),
+                                exit = fadeOut(tween(140)) + scaleOut(targetScale = 0.85f, animationSpec = tween(140)),
                                 modifier = Modifier
                                     .align(Alignment.CenterStart)
                                     .padding(start = 16.dp)
                             ) {
                                 FilledTonalIconButton(
                                     onClick = { navController.popBackStack() },
+                                    interactionSource = backSource,
                                     shape = CircleShape,
                                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                                         contentColor = MaterialTheme.colorScheme.onSurface
                                     ),
-                                    modifier = Modifier.size(36.dp)
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .pressScale(backSource, scaleDown = 0.90f)
                                 ) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,

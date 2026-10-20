@@ -2,6 +2,7 @@ package com.github.capntrips.kernelflasher.ui.screens.slot
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -27,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -36,6 +38,7 @@ import androidx.navigation.NavController
 import com.github.capntrips.kernelflasher.R
 import com.github.capntrips.kernelflasher.ui.components.DataCard
 import com.github.capntrips.kernelflasher.ui.components.SlotCard
+import com.github.capntrips.kernelflasher.ui.components.pressScale
 
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
@@ -69,10 +72,13 @@ fun ColumnScope.SlotContent(
                 icon = Icons.Rounded.Widgets
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val flashSource = remember { MutableInteractionSource() }
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(44.dp),
+                            .height(44.dp)
+                            .pressScale(flashSource, scaleDown = 0.96f),
+                        interactionSource = flashSource,
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
@@ -96,10 +102,13 @@ fun ColumnScope.SlotContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        val backupSource = remember { MutableInteractionSource() }
                         FilledTonalButton(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(44.dp),
+                                .height(44.dp)
+                                .pressScale(backupSource, scaleDown = 0.95f),
+                            interactionSource = backupSource,
                             shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.filledTonalButtonColors(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -122,10 +131,13 @@ fun ColumnScope.SlotContent(
                             )
                         }
 
+                        val restoreSource = remember { MutableInteractionSource() }
                         FilledTonalButton(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(44.dp),
+                                .height(44.dp)
+                                .pressScale(restoreSource, scaleDown = 0.95f),
+                            interactionSource = restoreSource,
                             shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.filledTonalButtonColors(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
