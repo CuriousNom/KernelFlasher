@@ -2,15 +2,14 @@ package com.github.capntrips.kernelflasher.ui.screens.slot
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,25 +19,22 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Archive
 import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material.icons.rounded.PowerSettingsNew
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -50,6 +46,7 @@ import com.github.capntrips.kernelflasher.ui.components.FlashList
 import com.github.capntrips.kernelflasher.ui.components.SlotCard
 import kotlinx.serialization.ExperimentalSerializationApi
 
+@OptIn(ExperimentalLayoutApi::class)
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
@@ -97,7 +94,7 @@ fun ColumnScope.SlotFlashContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp),
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(16.dp),
                         onClick = {
                             navController.navigate("slot$slotSuffix/flash/image")
                         }
@@ -139,47 +136,30 @@ fun ColumnScope.SlotFlashContent(
                 title = stringResource(R.string.backup),
                 icon = Icons.Rounded.Backup
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    for (partitionName in PartitionUtil.AvailablePartitions) {
-                        val isSelected = viewModel.backupPartitions[partitionName] == true
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        for (partitionName in PartitionUtil.AvailablePartitions) {
+                            val isSelected = viewModel.backupPartitions[partitionName] == true
+                            FilterChip(
+                                selected = isSelected,
+                                onClick = {
                                     viewModel.backupPartitions[partitionName] = !isSelected
                                 },
-                            shape = RoundedCornerShape(16.dp),
-                            color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                                else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
+                                label = { Text(partitionName) },
+                                leadingIcon = if (isSelected) {
+                                    {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Check,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                        )
+                                    }
+                                } else null
                             )
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 14.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Checkbox(
-                                    checked = isSelected,
-                                    onCheckedChange = { checked ->
-                                        viewModel.backupPartitions[partitionName] = checked
-                                    },
-                                    colors = CheckboxDefaults.colors(
-                                        checkedColor = MaterialTheme.colorScheme.primary
-                                    )
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    text = partitionName,
-                                    style = MaterialTheme.typography.titleSmall.copy(
-                                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
-                                    ),
-                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
-                                )
-                            }
                         }
                     }
 
@@ -187,8 +167,8 @@ fun ColumnScope.SlotFlashContent(
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp),
-                        shape = RoundedCornerShape(24.dp),
+                            .height(48.dp),
+                        shape = RoundedCornerShape(16.dp),
                         onClick = {
                             viewModel.backup(context)
                             navController.navigate("slot$slotSuffix/backup/backup") {
@@ -200,7 +180,7 @@ fun ColumnScope.SlotFlashContent(
                         Icon(
                             imageVector = Icons.Rounded.Backup,
                             contentDescription = null,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
@@ -225,7 +205,7 @@ fun ColumnScope.SlotFlashContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),
-                            shape = RoundedCornerShape(20.dp),
+                            shape = RoundedCornerShape(16.dp),
                             onClick = { viewModel.saveLog(context) }
                         ) {
                             Icon(
@@ -247,7 +227,7 @@ fun ColumnScope.SlotFlashContent(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(48.dp),
-                                shape = RoundedCornerShape(20.dp),
+                                shape = RoundedCornerShape(16.dp),
                                 onClick = {
                                     viewModel.backupZip(context) {
                                         navController.navigate("slot$slotSuffix/backups") {
@@ -275,7 +255,7 @@ fun ColumnScope.SlotFlashContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),
-                            shape = RoundedCornerShape(20.dp),
+                            shape = RoundedCornerShape(16.dp),
                             onClick = { navController.popBackStack() }
                         ) {
                             Icon(
@@ -293,18 +273,14 @@ fun ColumnScope.SlotFlashContent(
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            ),
+                                .height(48.dp),
+                            shape = RoundedCornerShape(16.dp),
                             onClick = { navController.navigate("reboot") }
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.PowerSettingsNew,
                                 contentDescription = null,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(18.dp)
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
