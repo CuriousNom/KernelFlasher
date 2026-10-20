@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,16 +48,16 @@ fun SlotCard(
             ) {
                 if (viewModel.isActive) {
                     Surface(
-                        shape = RoundedCornerShape(8.dp),
+                        shape = CircleShape,
                         color = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = Icons.Rounded.Check,
+                                imageVector = Icons.Rounded.CheckCircle,
                                 contentDescription = null,
                                 modifier = Modifier.size(14.dp),
                                 tint = MaterialTheme.colorScheme.primary
@@ -66,7 +66,7 @@ fun SlotCard(
                             Text(
                                 text = stringResource(R.string.active),
                                 style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.Bold
                                 )
                             )
                         }

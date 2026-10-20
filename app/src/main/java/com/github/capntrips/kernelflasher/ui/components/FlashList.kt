@@ -69,7 +69,7 @@ fun ColumnScope.FlashList(
 
     Spacer(Modifier.height(8.dp))
 
-    // Clean Material 3 log container
+    // Material 3 log container with colorful syntax highlighting
     Surface(
         modifier = Modifier
             .weight(1.0f)
@@ -86,8 +86,10 @@ fun ColumnScope.FlashList(
         ) {
             itemsIndexed(output) { _, message ->
                 val textColor = when {
-                    message.contains("error", ignoreCase = true) || message.contains("fail", ignoreCase = true) -> MaterialTheme.colorScheme.error
-                    message.contains("success", ignoreCase = true) || message.contains("done", ignoreCase = true) -> MaterialTheme.colorScheme.primary
+                    message.contains("error", ignoreCase = true) || message.contains("fail", ignoreCase = true) -> Color(0xFFFF6B6B)
+                    message.contains("success", ignoreCase = true) || message.contains("done", ignoreCase = true) -> Color(0xFF66BB6A)
+                    message.startsWith("!") || message.startsWith("*") -> Color(0xFFFFA726)
+                    message.startsWith("-") || message.startsWith("+") -> Color(0xFF42A5F5)
                     else -> MaterialTheme.colorScheme.onSurface
                 }
                 Text(
