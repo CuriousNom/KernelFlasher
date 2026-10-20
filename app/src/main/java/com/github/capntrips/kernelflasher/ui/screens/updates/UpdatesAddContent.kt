@@ -52,7 +52,7 @@ fun ColumnScope.UpdatesAddContent(
                 modifier = Modifier.size(20.dp)
             )
         },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
@@ -64,15 +64,15 @@ fun ColumnScope.UpdatesAddContent(
     Button(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
-        shape = RoundedCornerShape(24.dp),
+            .height(48.dp),
+        shape = RoundedCornerShape(16.dp),
         enabled = url.isNotBlank(),
         onClick = { viewModel.add(url) { navController.navigate("updates/view/$it") { popUpTo("updates") } } }
     ) {
         Icon(
             imageVector = Icons.Rounded.Add,
             contentDescription = null,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(18.dp)
         )
         Spacer(Modifier.width(8.dp))
         Text(

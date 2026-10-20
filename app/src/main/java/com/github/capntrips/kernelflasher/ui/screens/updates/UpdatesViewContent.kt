@@ -72,7 +72,7 @@ fun ColumnScope.UpdatesViewContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp),
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(16.dp),
                         onClick = { viewModel.downloadChangelog { navController.navigate("updates/view/${currentUpdate.id}/changelog") } }
                     ) {
                         Icon(
@@ -91,14 +91,14 @@ fun ColumnScope.UpdatesViewContent(
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp),
-                        shape = RoundedCornerShape(24.dp),
+                            .height(48.dp),
+                        shape = RoundedCornerShape(16.dp),
                         onClick = { viewModel.downloadKernel(context) }
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Download,
                             contentDescription = null,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
@@ -111,7 +111,7 @@ fun ColumnScope.UpdatesViewContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp),
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(16.dp),
                         onClick = { viewModel.update() }
                     ) {
                         Icon(
@@ -130,7 +130,7 @@ fun ColumnScope.UpdatesViewContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp),
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.filledTonalButtonColors(
                             containerColor = MaterialTheme.colorScheme.errorContainer,
                             contentColor = MaterialTheme.colorScheme.onErrorContainer

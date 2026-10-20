@@ -82,14 +82,14 @@ fun ColumnScope.UpdatesContent(
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(24.dp),
+                    .height(48.dp),
+                shape = RoundedCornerShape(16.dp),
                 onClick = { navController.navigate("updates/add") }
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
