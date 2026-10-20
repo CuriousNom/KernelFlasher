@@ -3,6 +3,7 @@ package com.github.capntrips.kernelflasher.ui.screens.reboot
 import android.os.Build
 import android.os.PowerManager
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
@@ -28,8 +30,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -64,10 +68,11 @@ fun ColumnScope.RebootContent(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     ) {
         Column {
-            RebootListItem(
+            RebootColorfulItem(
                 title = stringResource(R.string.reboot),
                 icon = Icons.Rounded.RestartAlt,
-                iconTint = MaterialTheme.colorScheme.primary,
+                badgeColor = MaterialTheme.colorScheme.primaryContainer,
+                iconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 onClick = { viewModel.rebootSystem() }
             )
 
@@ -76,10 +81,11 @@ fun ColumnScope.RebootContent(
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
-                RebootListItem(
+                RebootColorfulItem(
                     title = stringResource(R.string.reboot_userspace),
                     icon = Icons.Rounded.Cached,
-                    iconTint = MaterialTheme.colorScheme.secondary,
+                    badgeColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     onClick = { viewModel.rebootUserspace() }
                 )
             }
@@ -88,10 +94,11 @@ fun ColumnScope.RebootContent(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            RebootListItem(
+            RebootColorfulItem(
                 title = stringResource(R.string.reboot_recovery),
                 icon = Icons.Rounded.SettingsBackupRestore,
-                iconTint = MaterialTheme.colorScheme.secondary,
+                badgeColor = MaterialTheme.colorScheme.tertiaryContainer,
+                iconColor = MaterialTheme.colorScheme.onTertiaryContainer,
                 onClick = { viewModel.rebootRecovery() }
             )
 
@@ -99,10 +106,11 @@ fun ColumnScope.RebootContent(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            RebootListItem(
+            RebootColorfulItem(
                 title = stringResource(R.string.reboot_bootloader),
                 icon = Icons.Rounded.DeveloperMode,
-                iconTint = MaterialTheme.colorScheme.secondary,
+                badgeColor = MaterialTheme.colorScheme.secondaryContainer,
+                iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 onClick = { viewModel.rebootBootloader() }
             )
 
@@ -110,10 +118,11 @@ fun ColumnScope.RebootContent(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            RebootListItem(
+            RebootColorfulItem(
                 title = stringResource(R.string.reboot_download),
                 icon = Icons.Rounded.Download,
-                iconTint = MaterialTheme.colorScheme.secondary,
+                badgeColor = MaterialTheme.colorScheme.secondaryContainer,
+                iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 onClick = { viewModel.rebootDownload() }
             )
 
@@ -121,10 +130,11 @@ fun ColumnScope.RebootContent(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            RebootListItem(
+            RebootColorfulItem(
                 title = stringResource(R.string.reboot_edl),
                 icon = Icons.Rounded.FlashOn,
-                iconTint = MaterialTheme.colorScheme.error,
+                badgeColor = MaterialTheme.colorScheme.errorContainer,
+                iconColor = MaterialTheme.colorScheme.onErrorContainer,
                 onClick = { viewModel.rebootEdl() }
             )
         }
@@ -132,10 +142,11 @@ fun ColumnScope.RebootContent(
 }
 
 @Composable
-private fun RebootListItem(
+private fun RebootColorfulItem(
     title: String,
     icon: ImageVector,
-    iconTint: Color,
+    badgeColor: Color,
+    iconColor: Color,
     onClick: () -> Unit
 ) {
     ListItem(
@@ -147,12 +158,20 @@ private fun RebootListItem(
             )
         },
         leadingContent = {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier.size(24.dp)
-            )
+            Surface(
+                shape = CircleShape,
+                color = badgeColor,
+                contentColor = iconColor,
+                modifier = Modifier.size(38.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
         },
         trailingContent = {
             Icon(
