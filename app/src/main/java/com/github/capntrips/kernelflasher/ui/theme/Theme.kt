@@ -10,6 +10,24 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
+private val DarkColorScheme = darkColorScheme(
+    primary = GoogleBlueDark,
+    primaryContainer = GoogleBlueContainerDark,
+    surface = SurfaceDark,
+    surfaceContainerLow = SurfaceContainerLowDark,
+    surfaceContainer = SurfaceContainerDark,
+    surfaceContainerHigh = SurfaceContainerHighDark,
+)
+
+private val LightColorScheme = lightColorScheme(
+    primary = GoogleBlueLight,
+    primaryContainer = GoogleBlueContainerLight,
+    surface = SurfaceLight,
+    surfaceContainerLow = SurfaceContainerLowLight,
+    surfaceContainer = SurfaceContainerLight,
+    surfaceContainerHigh = SurfaceContainerHighLight,
+)
+
 @Composable
 fun KernelFlasherTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -21,8 +39,8 @@ fun KernelFlasherTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-        darkTheme -> darkColorScheme()
-        else -> lightColorScheme()
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
     }
     MaterialTheme(
         colorScheme = colorScheme,
