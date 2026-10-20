@@ -2,6 +2,8 @@ package com.github.capntrips.kernelflasher.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,16 +16,17 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DataSet(
     label: String,
-    labelColor: Color = Color.Unspecified,
+    labelColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     labelStyle: TextStyle = MaterialTheme.typography.labelMedium,
     content: @Composable (ColumnScope.() -> Unit)
 ) {
+    Spacer(Modifier.height(4.dp))
     Text(
         text = label,
         color = labelColor,
         style = labelStyle
     )
-    Column(Modifier.padding(start = 16.dp)) {
+    Column(Modifier.padding(start = 12.dp, top = 2.dp)) {
         content()
     }
 }

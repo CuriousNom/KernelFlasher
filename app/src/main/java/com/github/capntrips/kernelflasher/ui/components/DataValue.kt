@@ -1,8 +1,10 @@
 package com.github.capntrips.kernelflasher.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,19 +20,21 @@ import androidx.compose.ui.text.style.TextOverflow
 @Composable
 fun RowScope.DataValue(
     value: String,
-    color: Color = Color.Unspecified,
-    style: TextStyle = MaterialTheme.typography.titleSmall,
+    color: Color = MaterialTheme.colorScheme.onSurface,
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
     clickable: Boolean = false,
 ) {
     SelectionContainer(Modifier.alignByBaseline()) {
         var clicked by remember { mutableStateOf(false) }
         val modifier = if (clickable) {
             Modifier
-                .clickable { clicked = !clicked }
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(bounded = false)
+                ) { clicked = !clicked }
                 .alignByBaseline()
         } else {
-            Modifier
-                .alignByBaseline()
+            Modifier.alignByBaseline()
         }
         Text(
             modifier = modifier,

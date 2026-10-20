@@ -59,4 +59,7 @@
     <string name="backup_type">Tipo de backup</string>
     <string name="hashes">Hashes</string>
     <string name="partition_selection_unavailable">Seleção de partição indisponível para backups antigos</string>
+    <string name="active">Ativo</string>
+    <string name="actions">Ações</string>
+    <string name="diagnostics">Diagnósticos</string>
 </resources>

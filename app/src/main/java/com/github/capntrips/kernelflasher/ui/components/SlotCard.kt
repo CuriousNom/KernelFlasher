@@ -1,15 +1,30 @@
 package com.github.capntrips.kernelflasher.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.github.capntrips.kernelflasher.R
 import com.github.capntrips.kernelflasher.ui.screens.slot.SlotViewModel
@@ -23,13 +38,45 @@ fun SlotCard(
     isSlotScreen: Boolean = false,
     showDlkm: Boolean = true,
 ) {
-    DataCard (
+    DataCard(
         title = title,
+        icon = Icons.Rounded.Layers,
         button = {
-            if (!isSlotScreen && !viewModel.hasError) {
-                AnimatedVisibility(!viewModel.isRefreshing) {
-                    ViewButton {
-                        navController.navigate("slot${viewModel.slotSuffix}")
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (viewModel.isActive) {
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.CheckCircle,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                text = stringResource(R.string.active),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                        }
+                    }
+                }
+                if (!isSlotScreen && !viewModel.hasError) {
+                    AnimatedVisibility(!viewModel.isRefreshing) {
+                        ViewButton {
+                            navController.navigate("slot${viewModel.slotSuffix}")
+                        }
                     }
                 }
             }
@@ -40,7 +87,7 @@ fun SlotCard(
             DataRow(
                 label = stringResource(R.string.boot_sha1),
                 value = viewModel.sha1.take(8),
-                valueStyle = MaterialTheme.typography.titleSmall.copy(
+                valueStyle = MaterialTheme.typography.bodyMedium.copy(
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Medium
                 ),
@@ -49,7 +96,7 @@ fun SlotCard(
             AnimatedVisibility(!viewModel.isRefreshing && viewModel.kernelVersion != null) {
                 DataRow(
                     label = stringResource(R.string.kernel_version),
-                    value = if (viewModel.kernelVersion != null) viewModel.kernelVersion!! else "",
+                    value = viewModel.kernelVersion ?: "",
                     mutableMaxWidth = cardWidth,
                     clickable = true
                 )
@@ -70,7 +117,7 @@ fun SlotCard(
                 DataValue(
                     value = viewModel.error,
                     color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     clickable = true
                 )
             }

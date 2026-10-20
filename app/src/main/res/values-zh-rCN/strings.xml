@@ -59,4 +59,7 @@
     <string name="backup_type">备份类型</string>
     <string name="hashes">哈希值</string>
     <string name="partition_selection_unavailable">旧的备份无法选择分区</string>
+    <string name="active">当前槽位</string>
+    <string name="actions">操作</string>
+    <string name="diagnostics">诊断日志</string>
 </resources>

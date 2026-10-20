@@ -59,4 +59,7 @@
     <string name="backup_type">備份型別</string>
     <string name="hashes">雜湊值</string>
     <string name="partition_selection_unavailable">舊的備份無法選擇分割槽</string>
+    <string name="active">使用中</string>
+    <string name="actions">操作</string>
+    <string name="diagnostics">診斷日誌</string>
 </resources>
