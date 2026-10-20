@@ -1,43 +1,65 @@
 package com.github.capntrips.kernelflasher.ui.screens.slot
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Archive
 import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.FolderOpen
+import androidx.compose.material.icons.rounded.FolderZip
 import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material.icons.rounded.PowerSettingsNew
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.github.capntrips.kernelflasher.MainActivity
 import com.github.capntrips.kernelflasher.R
 import com.github.capntrips.kernelflasher.common.PartitionUtil
 import com.github.capntrips.kernelflasher.ui.components.DataCard
@@ -59,7 +81,25 @@ fun ColumnScope.SlotFlashContent(
     navController: NavController
 ) {
     val context = LocalContext.current
+    val mainActivity = context as MainActivity
     val currentRoute = navController.currentDestination?.route ?: ""
+
+    val ak3Result = remember { mutableStateOf<Uri?>(null) }
+    val ak3Launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        ak3Result.value = uri
+        if (uri == null) {
+            mainActivity.isAwaitingResult = false
+        }
+    }
+    ak3Result.value?.let { uri ->
+        if (mainActivity.isAwaitingResult) {
+            navController.navigate("slot$slotSuffix/flash/ak3") {
+                popUpTo("slot$slotSuffix")
+            }
+            viewModel.flashAk3(context, uri)
+        }
+        mainActivity.isAwaitingResult = false
+    }
 
     if (!listOf("/flash/ak3", "/flash/image/flash", "/backup/backup").any { currentRoute.endsWith(it) }) {
         SlotCard(
@@ -76,38 +116,122 @@ fun ColumnScope.SlotFlashContent(
         Spacer(Modifier.height(16.dp))
 
         if (currentRoute.endsWith("/flash")) {
-            DataCard(
-                title = stringResource(R.string.flash),
-                icon = Icons.Rounded.Bolt
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    FlashButton(
-                        buttonText = stringResource(R.string.flash_ak3_zip),
-                        callback = { uri ->
-                            navController.navigate("slot$slotSuffix/flash/ak3") {
-                                popUpTo("slot$slotSuffix")
-                            }
-                            viewModel.flashAk3(context, uri)
-                        }
-                    )
-                    FilledTonalButton(
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                // Hero Flash AK3 Zip Banner
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            mainActivity.isAwaitingResult = true
+                            ak3Launcher.launch("*/*")
+                        },
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        onClick = {
-                            navController.navigate("slot$slotSuffix/flash/image")
-                        }
+                            .padding(20.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Surface(
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(46.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.FolderZip,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onPrimary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.flash_ak3_zip),
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    text = "Select any .zip kernel installer",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
                         Icon(
-                            imageVector = Icons.Rounded.Layers,
+                            imageVector = Icons.Rounded.FolderOpen,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(22.dp)
                         )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.flash_partition_image),
-                            style = MaterialTheme.typography.labelLarge
+                    }
+                }
+
+                // Partition Image Banner
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { navController.navigate("slot$slotSuffix/flash/image") },
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.secondaryContainer
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Surface(
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.size(46.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Layers,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.flash_partition_image),
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Text(
+                                    text = "Flash raw partition images (.img)",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
@@ -137,6 +261,31 @@ fun ColumnScope.SlotFlashContent(
                 icon = Icons.Rounded.Backup
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Select partitions to backup",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Surface(
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        ) {
+                            Text(
+                                text = "${viewModel.backupPartitions.count { it.value }} selected",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                            )
+                        }
+                    }
+
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -167,8 +316,12 @@ fun ColumnScope.SlotFlashContent(
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp),
+                            .height(50.dp),
                         shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
                         onClick = {
                             viewModel.backup(context)
                             navController.navigate("slot$slotSuffix/backup/backup") {
@@ -180,7 +333,7 @@ fun ColumnScope.SlotFlashContent(
                         Icon(
                             imageVector = Icons.Rounded.Backup,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
@@ -228,6 +381,10 @@ fun ColumnScope.SlotFlashContent(
                                     .fillMaxWidth()
                                     .height(48.dp),
                                 shape = RoundedCornerShape(16.dp),
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                ),
                                 onClick = {
                                     viewModel.backupZip(context) {
                                         navController.navigate("slot$slotSuffix/backups") {
@@ -273,14 +430,18 @@ fun ColumnScope.SlotFlashContent(
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
+                                .height(50.dp),
                             shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            ),
                             onClick = { navController.navigate("reboot") }
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.PowerSettingsNew,
                                 contentDescription = null,
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier.size(20.dp)
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
