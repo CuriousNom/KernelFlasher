@@ -159,7 +159,9 @@ class BackupsViewModel(
     fun saveLog(context: Context) {
         launch {
             val now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm"))
-            val log = File("/sdcard/Download/restore-log--$now.log")
+            val downloadDir = File("/sdcard/Download")
+            Shell.cmd("mkdir -p $downloadDir").exec()
+            val log = File(downloadDir, "restore-log--$now.log")
             log.writeText(restoreOutput.joinToString("\n"))
             if (log.exists()) {
                 log(context, "Saved restore log to $log")

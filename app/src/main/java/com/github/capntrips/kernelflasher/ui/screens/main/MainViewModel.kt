@@ -139,7 +139,9 @@ class MainViewModel(
         launch {
             val now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm"))
             @SuppressLint("SdCardPath")
-            val ramoops = File("/sdcard/Download/console-ramoops--$now.log")
+            val downloadDir = File("/sdcard/Download")
+            Shell.cmd("mkdir -p $downloadDir").exec()
+            val ramoops = File(downloadDir, "console-ramoops--$now.log")
             Shell.cmd("cp /sys/fs/pstore/console-ramoops-0 $ramoops").exec()
             if (ramoops.exists()) {
                 log(context, "Saved ramoops to $ramoops")
@@ -153,7 +155,9 @@ class MainViewModel(
         launch {
             val now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm"))
             @SuppressLint("SdCardPath")
-            val dmesg = File("/sdcard/Download/dmesg--$now.log")
+            val downloadDir = File("/sdcard/Download")
+            Shell.cmd("mkdir -p $downloadDir").exec()
+            val dmesg = File(downloadDir, "dmesg--$now.log")
             Shell.cmd("dmesg > $dmesg").exec()
             if (dmesg.exists()) {
                 log(context, "Saved dmesg to $dmesg")
@@ -167,7 +171,9 @@ class MainViewModel(
         launch {
             val now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm"))
             @SuppressLint("SdCardPath")
-            val logcat = File("/sdcard/Download/logcat--$now.log")
+            val downloadDir = File("/sdcard/Download")
+            Shell.cmd("mkdir -p $downloadDir").exec()
+            val logcat = File(downloadDir, "logcat--$now.log")
             Shell.cmd("logcat -d > $logcat").exec()
             if (logcat.exists()) {
                 log(context, "Saved logcat to $logcat")
