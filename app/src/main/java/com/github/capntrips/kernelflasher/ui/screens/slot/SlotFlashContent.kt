@@ -125,13 +125,13 @@ fun ColumnScope.SlotFlashContent(
                             mainActivity.isAwaitingResult = true
                             ak3Launcher.launch("*/*")
                         },
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(18.dp),
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp),
+                            .padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -142,18 +142,18 @@ fun ColumnScope.SlotFlashContent(
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(46.dp)
+                                modifier = Modifier.size(36.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Rounded.FolderZip,
                                         contentDescription = null,
                                         tint = MaterialTheme.colorScheme.onPrimary,
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = Modifier.size(20.dp)
                                     )
                                 }
                             }
-                            Spacer(Modifier.width(16.dp))
+                            Spacer(Modifier.width(12.dp))
                             Column {
                                 Text(
                                     text = stringResource(R.string.flash_ak3_zip),
@@ -173,7 +173,7 @@ fun ColumnScope.SlotFlashContent(
                             imageVector = Icons.Rounded.FolderOpen,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(22.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
@@ -183,13 +183,13 @@ fun ColumnScope.SlotFlashContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { navController.navigate("slot$slotSuffix/flash/image") },
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(18.dp),
                     color = MaterialTheme.colorScheme.secondaryContainer
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp),
+                            .padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -200,18 +200,18 @@ fun ColumnScope.SlotFlashContent(
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.size(46.dp)
+                                modifier = Modifier.size(36.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Rounded.Layers,
                                         contentDescription = null,
                                         tint = MaterialTheme.colorScheme.onSecondary,
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = Modifier.size(20.dp)
                                     )
                                 }
                             }
-                            Spacer(Modifier.width(16.dp))
+                            Spacer(Modifier.width(12.dp))
                             Column {
                                 Text(
                                     text = stringResource(R.string.flash_partition_image),
@@ -231,7 +231,7 @@ fun ColumnScope.SlotFlashContent(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }

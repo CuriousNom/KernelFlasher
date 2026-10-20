@@ -307,21 +307,17 @@ fun ColumnScope.SlotBackupsContent(
                 }
             }
         } else {
-            DataCard(
-                title = stringResource(R.string.backups),
-                icon = Icons.Rounded.Backup
-            )
             val backups = backupsViewModel.backups.filter { it.value.bootSha1.equals(slotViewModel.sha1) || it.value.type == "ak3" }
             if (backups.isNotEmpty()) {
                 for (id in backups.keys.sortedByDescending { it }) {
                     val currentBackup = backups[id]!!
-                    Spacer(Modifier.height(14.dp))
+                    Spacer(Modifier.height(12.dp))
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(18.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
+                        Column(modifier = Modifier.padding(14.dp)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,

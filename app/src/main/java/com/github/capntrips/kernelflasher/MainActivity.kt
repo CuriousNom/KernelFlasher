@@ -204,7 +204,8 @@ class MainActivity : ComponentActivity() {
                         if (slotViewModel!!.wasFlashSuccess != null && listOf("slot{slotSuffix}", "slot").any { navController.currentDestination!!.route.equals(it) }) {
                             slotViewModel.clearFlash(this@MainActivity)
                         }
-                        RefreshableScreen(mainViewModel, navController, swipeEnabled = true) {
+                        val title = stringResource(if (slotSuffix == "_a") R.string.slot_a else if (slotSuffix == "_b") R.string.slot_b else R.string.slot)
+                        RefreshableScreen(mainViewModel, navController, swipeEnabled = true, title = title) {
                             SlotContent(slotViewModel, slotSuffix, navController)
                         }
 
@@ -212,7 +213,12 @@ class MainActivity : ComponentActivity() {
                     val slotFlashContent: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit = { backStackEntry ->
                         val slotSuffix = backStackEntry.arguments?.getString("slotSuffix") ?: ""
                         val slotViewModel = if (slotSuffix == "_b") slotViewModelB else slotViewModelA
-                        RefreshableScreen(mainViewModel, navController) {
+                        val currentRoute = navController.currentDestination?.route ?: ""
+                        val title = stringResource(
+                            if (currentRoute.endsWith("/backup")) R.string.backup
+                            else R.string.flash
+                        )
+                        RefreshableScreen(mainViewModel, navController, title = title) {
                             SlotFlashContent(slotViewModel!!, slotSuffix, navController)
                         }
                     }
@@ -224,7 +230,7 @@ class MainActivity : ComponentActivity() {
                         } else {
                             backupsViewModel.clearCurrent()
                         }
-                        RefreshableScreen(mainViewModel, navController) {
+                        RefreshableScreen(mainViewModel, navController, title = stringResource(R.string.backups)) {
                             SlotBackupsContent(slotViewModel!!, backupsViewModel, slotSuffix, navController)
                         }
                     }
@@ -233,7 +239,7 @@ class MainActivity : ComponentActivity() {
                         val slotViewModel = if (slotSuffix == "_b") slotViewModelB else slotViewModelA
                         backupsViewModel.currentBackup = backStackEntry.arguments?.getString("backupId")
                         if (backupsViewModel.backups.containsKey(backupsViewModel.currentBackup)) {
-                            RefreshableScreen(mainViewModel, navController) {
+                            RefreshableScreen(mainViewModel, navController, title = stringResource(R.string.flash)) {
                                 SlotFlashContent(slotViewModel!!, slotSuffix, navController)
                             }
                         }
@@ -274,26 +280,26 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("backups") {
                             backupsViewModel.clearCurrent()
-                            RefreshableScreen(mainViewModel, navController) {
+                            RefreshableScreen(mainViewModel, navController, title = stringResource(R.string.backups)) {
                                 BackupsContent(backupsViewModel, navController)
                             }
                         }
                         composable("backups/{backupId}") { backStackEntry ->
                             backupsViewModel.currentBackup = backStackEntry.arguments?.getString("backupId")
                             if (backupsViewModel.backups.containsKey(backupsViewModel.currentBackup)) {
-                                RefreshableScreen(mainViewModel, navController) {
+                                RefreshableScreen(mainViewModel, navController, title = stringResource(R.string.backup)) {
                                     BackupsContent(backupsViewModel, navController)
                                 }
                             }
                         }
                         composable("updates") {
                             updatesViewModel.clearCurrent()
-                            RefreshableScreen(mainViewModel, navController) {
+                            RefreshableScreen(mainViewModel, navController, title = stringResource(R.string.updates)) {
                                 UpdatesContent(updatesViewModel, navController)
                             }
                         }
                         composable("updates/add") {
-                            RefreshableScreen(mainViewModel, navController) {
+                            RefreshableScreen(mainViewModel, navController, title = stringResource(R.string.add)) {
                                 UpdatesAddContent(updatesViewModel, navController)
                             }
                         }
@@ -303,7 +309,7 @@ class MainActivity : ComponentActivity() {
                             updatesViewModel.currentUpdate = currentUpdate
                             if (updatesViewModel.currentUpdate != null) {
                                 // TODO: enable swipe refresh
-                                RefreshableScreen(mainViewModel, navController) {
+                                RefreshableScreen(mainViewModel, navController, title = stringResource(R.string.updates)) {
                                     UpdatesViewContent(updatesViewModel, navController)
                                 }
                             }
@@ -313,13 +319,13 @@ class MainActivity : ComponentActivity() {
                             val currentUpdate = updatesViewModel.updates.firstOrNull { it.id == updateId }
                             updatesViewModel.currentUpdate = currentUpdate
                             if (updatesViewModel.currentUpdate != null) {
-                                RefreshableScreen(mainViewModel, navController) {
+                                RefreshableScreen(mainViewModel, navController, title = stringResource(R.string.changelog)) {
                                     UpdatesChangelogContent(updatesViewModel, navController)
                                 }
                             }
                         }
                         composable("reboot") {
-                            RefreshableScreen(mainViewModel, navController) {
+                            RefreshableScreen(mainViewModel, navController, title = stringResource(R.string.reboot)) {
                                 RebootContent(rebootViewModel, navController)
                             }
                         }

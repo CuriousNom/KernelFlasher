@@ -55,16 +55,9 @@ fun ColumnScope.RebootContent(
     @Suppress("DEPRECATION")
     val isUserspaceSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && context.getSystemService(PowerManager::class.java)?.isRebootingUserspaceSupported == true
 
-    DataCard(
-        title = stringResource(R.string.reboot),
-        icon = Icons.Rounded.PowerSettingsNew
-    )
-
-    Spacer(Modifier.height(12.dp))
-
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     ) {
         Column {
@@ -162,13 +155,13 @@ private fun RebootColorfulItem(
                 shape = CircleShape,
                 color = badgeColor,
                 contentColor = iconColor,
-                modifier = Modifier.size(38.dp)
+                modifier = Modifier.size(34.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }

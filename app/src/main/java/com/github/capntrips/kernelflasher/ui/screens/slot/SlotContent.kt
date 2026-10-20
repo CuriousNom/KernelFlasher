@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,19 +62,19 @@ fun ColumnScope.SlotContent(
 
     AnimatedVisibility(!viewModel.isRefreshing) {
         Column {
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(12.dp))
 
             DataCard(
                 title = stringResource(R.string.actions),
                 icon = Icons.Rounded.Widgets
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (viewModel.isActive) {
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp),
-                            shape = RoundedCornerShape(16.dp),
+                                .height(44.dp),
+                            shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -83,9 +84,9 @@ fun ColumnScope.SlotContent(
                             Icon(
                                 imageVector = Icons.Rounded.Bolt,
                                 contentDescription = null,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(18.dp)
                             )
-                            Spacer(Modifier.width(10.dp))
+                            Spacer(Modifier.width(8.dp))
                             Text(
                                 text = stringResource(R.string.flash),
                                 style = MaterialTheme.typography.labelLarge
@@ -93,52 +94,83 @@ fun ColumnScope.SlotContent(
                         }
                     }
 
-                    FilledTonalButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        onClick = {
-                            viewModel.clearFlash(context)
-                            navController.navigate("slot$slotSuffix/backup")
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Backup,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(Modifier.width(10.dp))
-                        Text(
-                            text = stringResource(R.string.backup),
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-
                     if (viewModel.isActive) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            FilledTonalButton(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(44.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                ),
+                                onClick = {
+                                    viewModel.clearFlash(context)
+                                    navController.navigate("slot$slotSuffix/backup")
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Backup,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(Modifier.width(6.dp))
+                                Text(
+                                    text = stringResource(R.string.backup),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+
+                            FilledTonalButton(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(44.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                ),
+                                onClick = { navController.navigate("slot$slotSuffix/backups") }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Restore,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(Modifier.width(6.dp))
+                                Text(
+                                    text = stringResource(R.string.restore),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+                        }
+                    } else {
                         FilledTonalButton(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp),
-                            shape = RoundedCornerShape(16.dp),
+                                .height(44.dp),
+                            shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.filledTonalButtonColors(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                             ),
-                            onClick = { navController.navigate("slot$slotSuffix/backups") }
+                            onClick = {
+                                viewModel.clearFlash(context)
+                                navController.navigate("slot$slotSuffix/backup")
+                            }
                         ) {
                             Icon(
-                                imageVector = Icons.Rounded.Restore,
+                                imageVector = Icons.Rounded.Backup,
                                 contentDescription = null,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(18.dp)
                             )
-                            Spacer(Modifier.width(10.dp))
+                            Spacer(Modifier.width(8.dp))
                             Text(
-                                text = stringResource(R.string.restore),
+                                text = stringResource(R.string.backup),
                                 style = MaterialTheme.typography.labelLarge
                             )
                         }
@@ -147,8 +179,8 @@ fun ColumnScope.SlotContent(
                     FilledTonalButton(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp),
-                        shape = RoundedCornerShape(16.dp),
+                            .height(42.dp),
+                        shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.filledTonalButtonColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                             contentColor = MaterialTheme.colorScheme.onSurface
@@ -170,18 +202,18 @@ fun ColumnScope.SlotContent(
             }
 
             if (viewModel.hasVendorDlkm) {
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(12.dp))
                 DataCard(
                     title = stringResource(R.string.vendor_dlkm),
                     icon = Icons.Rounded.Layers
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         AnimatedVisibility(viewModel.isVendorDlkmMounted) {
                             FilledTonalButton(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(48.dp),
-                                shape = RoundedCornerShape(16.dp),
+                                    .height(42.dp),
+                                shape = RoundedCornerShape(14.dp),
                                 onClick = { viewModel.unmountVendorDlkm(context) }
                             ) {
                                 Text(
@@ -191,12 +223,12 @@ fun ColumnScope.SlotContent(
                             }
                         }
                         AnimatedVisibility(!viewModel.isVendorDlkmMounted && viewModel.isVendorDlkmMapped) {
-                            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 FilledTonalButton(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(48.dp),
-                                    shape = RoundedCornerShape(16.dp),
+                                        .height(42.dp),
+                                    shape = RoundedCornerShape(14.dp),
                                     onClick = { viewModel.mountVendorDlkm(context) }
                                 ) {
                                     Text(
@@ -207,8 +239,8 @@ fun ColumnScope.SlotContent(
                                 FilledTonalButton(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(48.dp),
-                                    shape = RoundedCornerShape(16.dp),
+                                        .height(42.dp),
+                                    shape = RoundedCornerShape(14.dp),
                                     colors = ButtonDefaults.filledTonalButtonColors(
                                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                                         contentColor = MaterialTheme.colorScheme.onSurface
@@ -226,8 +258,8 @@ fun ColumnScope.SlotContent(
                             FilledTonalButton(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(48.dp),
-                                shape = RoundedCornerShape(16.dp),
+                                    .height(42.dp),
+                                shape = RoundedCornerShape(14.dp),
                                 onClick = { viewModel.mapVendorDlkm(context) }
                             ) {
                                 Text(

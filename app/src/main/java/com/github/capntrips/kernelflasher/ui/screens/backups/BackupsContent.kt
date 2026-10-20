@@ -68,10 +68,10 @@ fun ColumnScope.BackupsContent(
         val currentBackup = viewModel.backups.getValue(viewModel.currentBackup!!)
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(18.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(14.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -197,8 +197,8 @@ fun ColumnScope.BackupsContent(
                 FilledTonalButton(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(16.dp),
+                        .height(44.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
                         contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -219,19 +219,14 @@ fun ColumnScope.BackupsContent(
             }
         }
     } else {
-        DataCard(
-            title = stringResource(R.string.backups),
-            icon = Icons.Rounded.Backup
-        )
-
         AnimatedVisibility(viewModel.needsMigration) {
             Column {
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(8.dp))
                 FilledTonalButton(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(16.dp),
+                        .height(44.dp),
+                    shape = RoundedCornerShape(14.dp),
                     onClick = { viewModel.migrate(context) }
                 ) {
                     Icon(
@@ -254,10 +249,10 @@ fun ColumnScope.BackupsContent(
                 Spacer(Modifier.height(14.dp))
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(18.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(modifier = Modifier.padding(14.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
