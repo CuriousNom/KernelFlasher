@@ -1,26 +1,36 @@
 package com.github.capntrips.kernelflasher.ui.screens.backups
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Backup
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.FolderOff
+import androidx.compose.material.icons.rounded.Sync
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.github.capntrips.kernelflasher.R
@@ -30,6 +40,7 @@ import com.github.capntrips.kernelflasher.ui.components.DataRow
 import com.github.capntrips.kernelflasher.ui.components.DataSet
 import com.github.capntrips.kernelflasher.ui.components.ViewButton
 
+@Suppress("DEPRECATION")
 @ExperimentalMaterial3Api
 @Composable
 fun ColumnScope.BackupsContent(
@@ -37,8 +48,12 @@ fun ColumnScope.BackupsContent(
     navController: NavController
 ) {
     val context = LocalContext.current
+
     if (viewModel.currentBackup != null && viewModel.backups.containsKey(viewModel.currentBackup)) {
-        DataCard (viewModel.currentBackup!!) {
+        DataCard(
+            title = viewModel.currentBackup!!,
+            icon = Icons.Rounded.Backup
+        ) {
             val cardWidth = remember { mutableIntStateOf(0) }
             val currentBackup = viewModel.backups.getValue(viewModel.currentBackup!!)
             DataRow(stringResource(R.string.backup_type), currentBackup.type, mutableMaxWidth = cardWidth)
@@ -47,7 +62,7 @@ fun ColumnScope.BackupsContent(
                 DataRow(
                     label = stringResource(R.string.boot_sha1),
                     value = currentBackup.bootSha1?.take(8) ?: "",
-                    valueStyle = MaterialTheme.typography.titleSmall.copy(
+                    valueStyle = MaterialTheme.typography.bodyMedium.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Medium
                     ),
@@ -62,7 +77,7 @@ fun ColumnScope.BackupsContent(
                                 DataRow(
                                     label = partitionName,
                                     value = hash.take(8),
-                                    valueStyle = MaterialTheme.typography.titleSmall.copy(
+                                    valueStyle = MaterialTheme.typography.bodyMedium.copy(
                                         fontFamily = FontFamily.Monospace,
                                         fontWeight = FontWeight.Medium
                                     ),
@@ -76,45 +91,73 @@ fun ColumnScope.BackupsContent(
         }
         AnimatedVisibility(!viewModel.isRefreshing) {
             Column {
-                Spacer(Modifier.height(5.dp))
-                OutlinedButton(
+                Spacer(Modifier.height(14.dp))
+                FilledTonalButton(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(4.dp),
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    ),
                     onClick = { viewModel.delete(context) { navController.popBackStack() } }
                 ) {
-                    Text(stringResource(R.string.delete))
+                    Icon(
+                        imageVector = Icons.Rounded.Delete,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.delete),
+                        style = MaterialTheme.typography.labelLarge
+                    )
                 }
             }
         }
     } else {
-        DataCard(stringResource(R.string.backups))
+        DataCard(
+            title = stringResource(R.string.backups),
+            icon = Icons.Rounded.Backup
+        )
+
         AnimatedVisibility(viewModel.needsMigration) {
             Column {
-                Spacer(Modifier.height(5.dp))
-                OutlinedButton(
+                Spacer(Modifier.height(12.dp))
+                FilledTonalButton(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(4.dp),
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(20.dp),
                     onClick = { viewModel.migrate(context) }
                 ) {
-                    Text(stringResource(R.string.migrate))
+                    Icon(
+                        imageVector = Icons.Rounded.Sync,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.migrate),
+                        style = MaterialTheme.typography.labelLarge
+                    )
                 }
             }
         }
+
         if (viewModel.backups.isNotEmpty()) {
             for (id in viewModel.backups.keys.sortedByDescending { it }) {
                 val currentBackup = viewModel.backups[id]!!
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(14.dp))
                 DataCard(
                     title = id,
+                    icon = Icons.Rounded.Backup,
                     button = {
                         AnimatedVisibility(!viewModel.isRefreshing) {
-                            Column {
-                                ViewButton(onClick = {
-                                    navController.navigate("backups/$id")
-                                })
-                            }
+                            ViewButton(onClick = {
+                                navController.navigate("backups/$id")
+                            })
                         }
                     }
                 ) {
@@ -122,8 +165,8 @@ fun ColumnScope.BackupsContent(
                     if (currentBackup.type == "raw") {
                         DataRow(
                             label = stringResource(R.string.boot_sha1),
-                            value = currentBackup.bootSha1!!.substring(0, 8),
-                            valueStyle = MaterialTheme.typography.titleSmall.copy(
+                            value = currentBackup.bootSha1?.take(8) ?: "",
+                            valueStyle = MaterialTheme.typography.bodyMedium.copy(
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Medium
                             ),
@@ -134,13 +177,26 @@ fun ColumnScope.BackupsContent(
                 }
             }
         } else {
-            Spacer(Modifier.height(32.dp))
-            Text(
-                stringResource(R.string.no_backups_found),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                fontStyle = FontStyle.Italic
-            )
+            Spacer(Modifier.height(36.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.FolderOff,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = stringResource(R.string.no_backups_found),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
