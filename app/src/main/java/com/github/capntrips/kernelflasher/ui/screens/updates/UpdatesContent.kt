@@ -6,10 +6,16 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.SystemUpdate
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,19 +41,22 @@ fun ColumnScope.UpdatesContent(
     navController: NavController
 ) {
     @Suppress("UNUSED_VARIABLE") val context = LocalContext.current
-    DataCard(stringResource(R.string.updates))
+    DataCard(
+        title = stringResource(R.string.updates),
+        icon = Icons.Rounded.SystemUpdate
+    )
+
     if (viewModel.updates.isNotEmpty()) {
         for (update in viewModel.updates.sortedByDescending { it.kernelDate }) {
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(14.dp))
             DataCard(
                 title = update.kernelName,
+                icon = Icons.Rounded.SystemUpdate,
                 button = {
                     AnimatedVisibility(!viewModel.isRefreshing) {
-                        Column {
-                            ViewButton(onClick = {
-                                navController.navigate("updates/view/${update.id}")
-                            })
-                        }
+                        ViewButton(onClick = {
+                            navController.navigate("updates/view/${update.id}")
+                        })
                     }
                 }
             ) {
@@ -57,29 +66,36 @@ fun ColumnScope.UpdatesContent(
                 DataRow(
                     label = stringResource(R.string.last_updated),
                     value = UpdatesViewModel.lastUpdatedFormatter.format(update.lastUpdated!!),
-                    labelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.33f),
-                    labelStyle = MaterialTheme.typography.labelMedium.copy(
-                        fontStyle = FontStyle.Italic
-                    ),
-                    valueColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.33f),
-                    valueStyle = MaterialTheme.typography.titleSmall.copy(
-                        fontStyle = FontStyle.Italic
-                    ),
+                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    labelStyle = MaterialTheme.typography.labelMedium.copy(fontStyle = FontStyle.Italic),
+                    valueColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    valueStyle = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
                     mutableMaxWidth = cardWidth
                 )
             }
         }
     }
+
     AnimatedVisibility(!viewModel.isRefreshing) {
         Column {
-            Spacer(Modifier.height(12.dp))
-            OutlinedButton(
+            Spacer(Modifier.height(16.dp))
+            Button(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(4.dp),
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape = RoundedCornerShape(24.dp),
                 onClick = { navController.navigate("updates/add") }
             ) {
-                Text(stringResource(R.string.add))
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.add),
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
         }
     }
