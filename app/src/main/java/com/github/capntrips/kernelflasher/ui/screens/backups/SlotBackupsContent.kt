@@ -225,67 +225,65 @@ fun ColumnScope.SlotBackupsContent(
                 Column {
                     Spacer(Modifier.height(14.dp))
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        if (slotViewModel.isActive) {
-                            if (currentBackup.type == "raw") {
-                                Button(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(50.dp),
-                                    shape = RoundedCornerShape(16.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary
-                                    ),
-                                    onClick = {
-                                        navController.navigate("slot$slotSuffix/backups/${backupsViewModel.currentBackup!!}/restore")
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Restore,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        text = stringResource(R.string.restore),
-                                        style = MaterialTheme.typography.labelLarge
-                                    )
+                        if (currentBackup.type == "raw") {
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                ),
+                                onClick = {
+                                    navController.navigate("slot$slotSuffix/backups/${backupsViewModel.currentBackup!!}/restore")
                                 }
-                            } else if (currentBackup.type == "ak3") {
-                                Button(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(50.dp),
-                                    shape = RoundedCornerShape(16.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary
-                                    ),
-                                    onClick = {
-                                        slotViewModel.flashAk3(context, backupsViewModel.currentBackup!!, currentBackup.filename!!)
-                                        navController.navigate("slot$slotSuffix/backups/${backupsViewModel.currentBackup!!}/flash/ak3") {
-                                            popUpTo("slot$slotSuffix")
-                                        }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Restore,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.restore),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+                        } else if (currentBackup.type == "ak3") {
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                ),
+                                onClick = {
+                                    slotViewModel.flashAk3(context, backupsViewModel.currentBackup!!, currentBackup.filename!!)
+                                    navController.navigate("slot$slotSuffix/backups/${backupsViewModel.currentBackup!!}/flash/ak3") {
+                                        popUpTo("slot$slotSuffix")
                                     }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Bolt,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        text = stringResource(R.string.flash),
-                                        style = MaterialTheme.typography.labelLarge
-                                    )
                                 }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Bolt,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.flash),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
                             }
                         }
                         FilledTonalButton(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp),
-                            shape = RoundedCornerShape(16.dp),
+                                .height(44.dp),
+                            shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.filledTonalButtonColors(
                                 containerColor = MaterialTheme.colorScheme.errorContainer,
                                 contentColor = MaterialTheme.colorScheme.onErrorContainer

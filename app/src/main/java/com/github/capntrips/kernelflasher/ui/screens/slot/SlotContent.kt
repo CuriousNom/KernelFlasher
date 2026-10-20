@@ -69,89 +69,36 @@ fun ColumnScope.SlotContent(
                 icon = Icons.Rounded.Widgets
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    if (viewModel.isActive) {
-                        Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(44.dp),
-                            shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            ),
-                            onClick = { navController.navigate("slot$slotSuffix/flash") }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Bolt,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(R.string.flash),
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        onClick = { navController.navigate("slot$slotSuffix/flash") }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Bolt,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.flash),
+                            style = MaterialTheme.typography.labelLarge
+                        )
                     }
 
-                    if (viewModel.isActive) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            FilledTonalButton(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(44.dp),
-                                shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                ),
-                                onClick = {
-                                    viewModel.clearFlash(context)
-                                    navController.navigate("slot$slotSuffix/backup")
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Backup,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(Modifier.width(6.dp))
-                                Text(
-                                    text = stringResource(R.string.backup),
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-                            }
-
-                            FilledTonalButton(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(44.dp),
-                                shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                ),
-                                onClick = { navController.navigate("slot$slotSuffix/backups") }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Restore,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(Modifier.width(6.dp))
-                                Text(
-                                    text = stringResource(R.string.restore),
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-                            }
-                        }
-                    } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         FilledTonalButton(
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .weight(1f)
                                 .height(44.dp),
                             shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.filledTonalButtonColors(
@@ -168,9 +115,32 @@ fun ColumnScope.SlotContent(
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
-                            Spacer(Modifier.width(8.dp))
+                            Spacer(Modifier.width(6.dp))
                             Text(
                                 text = stringResource(R.string.backup),
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+
+                        FilledTonalButton(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.filledTonalButtonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            onClick = { navController.navigate("slot$slotSuffix/backups") }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Restore,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(R.string.restore),
                                 style = MaterialTheme.typography.labelLarge
                             )
                         }

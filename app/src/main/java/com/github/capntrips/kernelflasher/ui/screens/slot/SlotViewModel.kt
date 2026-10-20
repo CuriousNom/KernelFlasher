@@ -60,6 +60,7 @@ class SlotViewModel(
     private val _wasFlashSuccess: MutableState<Boolean?> = mutableStateOf(null)
     private val _backupPartitions: SnapshotStateMap<String, Boolean> = mutableStateMapOf()
     private var wasSlotReset: Boolean = false
+    private var originalSlotSuffix: String? = null
     private var flashUri: Uri? = null
     private var flashFilename: String? = null
     private val hashAlgorithm: String = "SHA-256"
@@ -431,10 +432,18 @@ class SlotViewModel(
     }
 
     private fun resetSlot() {
-        val activeSlotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out.firstOrNull() ?: ""
-        val newSlot = if (activeSlotSuffix == "_a") "_b" else "_a"
-        Shell.cmd("resetprop -n ro.boot.slot_suffix $newSlot || magisk resetprop -n ro.boot.slot_suffix $newSlot").exec()
-        wasSlotReset = !wasSlotReset
+        if (!wasSlotReset) {
+            val activeSlotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out.firstOrNull() ?: ""
+            originalSlotSuffix = activeSlotSuffix
+            val targetSlot = if (slotSuffix.isNotEmpty()) slotSuffix else (if (activeSlotSuffix == "_a") "_b" else "_a")
+            Shell.cmd("resetprop -n ro.boot.slot_suffix $targetSlot || magisk resetprop -n ro.boot.slot_suffix $targetSlot").exec()
+            wasSlotReset = true
+        } else {
+            val restoreSlot = originalSlotSuffix ?: (if (Shell.cmd("getprop ro.boot.slot_suffix").exec().out.firstOrNull() == "_a") "_b" else "_a")
+            Shell.cmd("resetprop -n ro.boot.slot_suffix $restoreSlot || magisk resetprop -n ro.boot.slot_suffix $restoreSlot").exec()
+            wasSlotReset = false
+            originalSlotSuffix = null
+        }
     }
 
     @Suppress("FunctionName")
