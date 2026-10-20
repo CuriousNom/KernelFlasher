@@ -40,8 +40,7 @@ fun DataCard(
                         imageVector = icon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .size(22.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                     Spacer(Modifier.width(10.dp))
                 }
@@ -58,7 +57,7 @@ fun DataCard(
             }
         }
         if (content != null) {
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(12.dp))
             content()
         }
     }
