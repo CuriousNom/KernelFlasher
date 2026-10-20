@@ -12,8 +12,8 @@ android {
         applicationId "com.github.curiousnom.kernelflasher"
         minSdk 29
         targetSdk 35
-        versionCode 20
-        versionName "1.0.0-alpha20"
+        versionCode 200
+        versionName "2.0.0"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -31,9 +31,24 @@ android {
             useSupportLibrary true
         }
     }
+    signingConfigs {
+        release {
+            if (file("release.keystore").exists()) {
+                storeFile file("release.keystore")
+                storePassword "kernelflasher"
+                keyAlias "kernelflasher"
+                keyPassword "kernelflasher"
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
+            if (file("release.keystore").exists()) {
+                signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
+            }
         }
     }
     sourceSets {
