@@ -431,7 +431,7 @@ class SlotViewModel(
     private fun resetSlot() {
         val activeSlotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out.firstOrNull() ?: ""
         val newSlot = if (activeSlotSuffix == "_a") "_b" else "_a"
-        Shell.cmd("magisk resetprop -n ro.boot.slot_suffix $newSlot").exec()
+        Shell.cmd("resetprop -n ro.boot.slot_suffix $newSlot || magisk resetprop -n ro.boot.slot_suffix $newSlot").exec()
         wasSlotReset = !wasSlotReset
     }
 
