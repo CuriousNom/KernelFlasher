@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,6 +67,7 @@ fun RefreshableScreen(
     viewModel: MainViewModel,
     navController: NavController,
     swipeEnabled: Boolean = false,
+    title: String? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val navigationBars = WindowInsets.navigationBars.asPaddingValues()
@@ -86,61 +89,80 @@ fun RefreshableScreen(
                         .fillMaxWidth()
                         .statusBarsPadding()
                         .displayCutoutPadding()
-                        .height(64.dp)
+                        .height(56.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    if (navController.previousBackStackEntry != null) {
-                        AnimatedVisibility(
-                            visible = !viewModel.isRefreshing,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 16.dp)
-                        ) {
-                            FilledTonalIconButton(
-                                onClick = { navController.popBackStack() },
-                                shape = CircleShape,
-                                colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    contentColor = MaterialTheme.colorScheme.onSurface
-                                ),
-                                modifier = Modifier.size(40.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                    contentDescription = stringResource(R.string.back),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.align(Alignment.Center),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                    Box(
+                        modifier = Modifier
+                            .widthIn(max = 760.dp)
+                            .fillMaxWidth()
+                            .fillMaxHeight()
                     ) {
-                        Surface(
-                            shape = RoundedCornerShape(10.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier.size(28.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Bolt,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(18.dp)
+                        if (navController.previousBackStackEntry != null) {
+                            AnimatedVisibility(
+                                visible = !viewModel.isRefreshing,
+                                enter = fadeIn(),
+                                exit = fadeOut(),
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(start = 16.dp)
+                            ) {
+                                FilledTonalIconButton(
+                                    onClick = { navController.popBackStack() },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        contentColor = MaterialTheme.colorScheme.onSurface
+                                    ),
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                        contentDescription = stringResource(R.string.back),
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                        }
+                        if (title != null) {
+                            Text(
+                                text = title,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        } else {
+                            Row(
+                                modifier = Modifier.align(Alignment.Center),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    modifier = Modifier.size(24.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Bolt,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                }
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.app_name),
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.app_name),
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
                     }
                 }
             }
@@ -151,16 +173,18 @@ fun RefreshableScreen(
                 .padding(paddingValues)
                 .pullRefresh(state, swipeEnabled)
                 .fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
         ) {
             val layoutDirection = LocalLayoutDirection.current
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .widthIn(max = 760.dp)
+                    .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .padding(
                         start = 16.dp + displayCutout.calculateStartPadding(layoutDirection),
                         end = 16.dp + displayCutout.calculateEndPadding(layoutDirection),
-                        top = 16.dp,
+                        top = 12.dp,
                         bottom = 16.dp + navigationBars.calculateBottomPadding()
                     ),
                 content = content

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Card(
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(20.dp),
+    shape: Shape = RoundedCornerShape(18.dp),
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainer,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     border: BorderStroke? = null,
@@ -39,7 +39,7 @@ fun Card(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(14.dp),
             content = content
         )
     }

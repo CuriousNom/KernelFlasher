@@ -2,6 +2,7 @@ package com.github.capntrips.kernelflasher.ui.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -24,7 +25,8 @@ fun ViewButton(
 ) {
     FilledTonalButton(
         shape = CircleShape,
-        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+        modifier = Modifier.height(34.dp),
         colors = ButtonDefaults.filledTonalButtonColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -33,13 +35,13 @@ fun ViewButton(
     ) {
         Text(
             text = stringResource(R.string.view),
-            style = MaterialTheme.typography.labelMedium
+            style = MaterialTheme.typography.labelSmall
         )
         Spacer(Modifier.width(4.dp))
         Icon(
             imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
             contentDescription = null,
-            modifier = Modifier.size(14.dp)
+            modifier = Modifier.size(13.dp)
         )
     }
 }
