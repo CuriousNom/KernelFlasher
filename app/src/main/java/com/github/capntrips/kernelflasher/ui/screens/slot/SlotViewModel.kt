@@ -92,14 +92,15 @@ class SlotViewModel(
             inInit = true
         }
 
-        val magiskboot = File(context.filesDir, "magiskboot")
-        Shell.cmd("$magiskboot unpack $boot").exec()
+        val filesDir = context.filesDir
+        val magiskboot = File(filesDir, "magiskboot")
+        Shell.cmd("cd $filesDir && $magiskboot unpack $boot").exec()
         if (initBoot != null) {
-            Shell.cmd("$magiskboot unpack $initBoot").exec()
+            Shell.cmd("cd $filesDir && $magiskboot unpack $initBoot").exec()
         }
 
-        val ramdisk = File(context.filesDir, "ramdisk.cpio")
-        val kernel = File(context.filesDir, "kernel")
+        val ramdisk = File(filesDir, "ramdisk.cpio")
+        val kernel = File(filesDir, "kernel")
 
         var vendorDlkm = PartitionUtil.findPartitionBlockDevice(context, "vendor_dlkm", slotSuffix)
         hasVendorDlkm = vendorDlkm != null
@@ -117,9 +118,9 @@ class SlotViewModel(
         }
 
         if (ramdisk.exists()) {
-            when (Shell.cmd("$magiskboot cpio ramdisk.cpio test").exec().code) {
+            when (Shell.cmd("cd $filesDir && $magiskboot cpio ramdisk.cpio test").exec().code) {
                 0 -> _sha1 = Shell.cmd("$magiskboot sha1 $boot").exec().out.firstOrNull()
-                1 -> _sha1 = Shell.cmd("$magiskboot cpio ramdisk.cpio sha1").exec().out.firstOrNull()
+                1 -> _sha1 = Shell.cmd("cd $filesDir && $magiskboot cpio ramdisk.cpio sha1").exec().out.firstOrNull()
                 else -> log(context, "Invalid ramdisk in boot.img", shouldThrow = true)
             }
         } else if (kernel.exists()) {
@@ -127,7 +128,7 @@ class SlotViewModel(
         } else {
             log(context, "Invalid boot.img, no ramdisk or kernel found", shouldThrow = true)
         }
-        Shell.cmd("$magiskboot cleanup").exec()
+        Shell.cmd("cd $filesDir && $magiskboot cleanup").exec()
 
         PartitionUtil.AvailablePartitions.forEach { partitionName ->
             _backupPartitions[partitionName] = true
@@ -240,19 +241,20 @@ class SlotViewModel(
 
     @Suppress("FunctionName", "SameParameterValue")
     private fun _getKernel(context: Context) {
-        val magiskboot = File(context.filesDir, "magiskboot")
-        Shell.cmd("$magiskboot unpack $boot").exec()
+        val filesDir = context.filesDir
+        val magiskboot = File(filesDir, "magiskboot")
+        Shell.cmd("cd $filesDir && $magiskboot unpack $boot").exec()
         if (initBoot != null) {
-            Shell.cmd("$magiskboot unpack $initBoot").exec()
+            Shell.cmd("cd $filesDir && $magiskboot unpack $initBoot").exec()
         }
-        val kernel = File(context.filesDir, "kernel")
+        val kernel = File(filesDir, "kernel")
         if (kernel.exists()) {
-            val result = Shell.cmd("strings kernel | grep -E -m1 'Linux version.*#' | cut -d\\  -f3-").exec().out
+            val result = Shell.cmd("cd $filesDir && strings kernel | grep -E -m1 'Linux version.*#' | cut -d\\  -f3-").exec().out
             if (result.isNotEmpty()) {
                 kernelVersion = result[0].replace("""\(.+\)""".toRegex(), "").replace("""\s+""".toRegex(), " ")
             }
         }
-        Shell.cmd("$magiskboot cleanup").exec()
+        Shell.cmd("cd $filesDir && $magiskboot cleanup").exec()
     }
 
     fun getKernel(context: Context) {
