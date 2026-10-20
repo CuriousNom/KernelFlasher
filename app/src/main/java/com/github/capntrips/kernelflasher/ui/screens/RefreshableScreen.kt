@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,7 +23,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -44,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -62,8 +67,8 @@ fun RefreshableScreen(
     swipeEnabled: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val statusBar = WindowInsets.statusBars.only(WindowInsetsSides.Top).asPaddingValues()
     val navigationBars = WindowInsets.navigationBars.asPaddingValues()
+    val displayCutout = WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal).asPaddingValues()
     val context = LocalContext.current
     val state = rememberPullRefreshState(viewModel.isRefreshing, onRefresh = {
         viewModel.refresh(context)
@@ -73,14 +78,14 @@ fun RefreshableScreen(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(statusBar),
+                modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colorScheme.surface
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .statusBarsPadding()
+                        .displayCutoutPadding()
                         .height(64.dp)
                 ) {
                     if (navController.previousBackStackEntry != null) {
@@ -147,11 +152,17 @@ fun RefreshableScreen(
                 .pullRefresh(state, swipeEnabled)
                 .fillMaxSize(),
         ) {
+            val layoutDirection = LocalLayoutDirection.current
             Column(
                 modifier = Modifier
-                    .padding(16.dp, 0.dp, 16.dp, 16.dp + navigationBars.calculateBottomPadding())
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        start = 16.dp + displayCutout.calculateStartPadding(layoutDirection),
+                        end = 16.dp + displayCutout.calculateEndPadding(layoutDirection),
+                        top = 16.dp,
+                        bottom = 16.dp + navigationBars.calculateBottomPadding()
+                    ),
                 content = content
             )
             PullRefreshIndicator(
