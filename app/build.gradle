@@ -9,7 +9,7 @@ android {
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.github.capntrips.kernelflasher"
+        applicationId "com.github.curiousnom.kernelflasher"
         minSdk 29
         targetSdk 35
         versionCode 20
@@ -65,7 +65,7 @@ android {
             useLegacyPackaging true
         }
     }
-    namespace 'com.github.capntrips.kernelflasher'
+    namespace 'com.github.curiousnom.kernelflasher'
 }
 
 ksp {
