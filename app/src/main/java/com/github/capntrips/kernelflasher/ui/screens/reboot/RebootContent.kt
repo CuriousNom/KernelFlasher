@@ -30,7 +30,9 @@ fun ColumnScope.RebootContent(
     ) {
         Text(stringResource(R.string.reboot))
     }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && context.getSystemService(PowerManager::class.java)?.isRebootingUserspaceSupported == true) {
+    @Suppress("DEPRECATION")
+    val isUserspaceSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && context.getSystemService(PowerManager::class.java)?.isRebootingUserspaceSupported == true
+    if (isUserspaceSupported) {
         OutlinedButton(
             modifier = Modifier
                 .fillMaxWidth(),
