@@ -77,7 +77,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material.icons.extended)
+    // Replaced bloated material-icons-extended (~84MB / thousands of unused icons)
+    // with optimized AppIcons containing only the app's specific icons.
+    // implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui)
