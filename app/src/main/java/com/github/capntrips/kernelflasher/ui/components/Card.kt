@@ -1,5 +1,6 @@
 package com.github.capntrips.kernelflasher.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -29,6 +31,10 @@ fun Card(
     elevation: Dp = 0.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val cardPadding = if (isLandscape) 14.dp else 16.dp
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -49,7 +55,7 @@ fun Card(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(cardPadding),
             content = content
         )
     }

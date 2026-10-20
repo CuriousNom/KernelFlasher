@@ -1,5 +1,6 @@
 package com.github.capntrips.kernelflasher.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -53,6 +54,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -77,6 +79,11 @@ fun RefreshableScreen(
 ) {
     val navigationBars = WindowInsets.navigationBars.asPaddingValues()
     val displayCutout = WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal).asPaddingValues()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val topPadding = if (isLandscape) 12.dp else 20.dp
+    val horizontalPadding = if (isLandscape) 16.dp else 20.dp
+    val topBarHeight = if (isLandscape) 56.dp else 60.dp
     val context = LocalContext.current
     val state = rememberPullRefreshState(viewModel.isRefreshing, onRefresh = {
         viewModel.refresh(context)
@@ -94,7 +101,7 @@ fun RefreshableScreen(
                         .fillMaxWidth()
                         .statusBarsPadding()
                         .displayCutoutPadding()
-                        .height(56.dp),
+                        .height(topBarHeight),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
@@ -160,10 +167,10 @@ fun RefreshableScreen(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .padding(
-                        start = 16.dp + displayCutout.calculateStartPadding(layoutDirection),
-                        end = 16.dp + displayCutout.calculateEndPadding(layoutDirection),
-                        top = 12.dp,
-                        bottom = 16.dp + navigationBars.calculateBottomPadding()
+                        start = horizontalPadding + displayCutout.calculateStartPadding(layoutDirection),
+                        end = horizontalPadding + displayCutout.calculateEndPadding(layoutDirection),
+                        top = topPadding,
+                        bottom = (if (isLandscape) 16.dp else 24.dp) + navigationBars.calculateBottomPadding()
                     ),
                 content = content
             )

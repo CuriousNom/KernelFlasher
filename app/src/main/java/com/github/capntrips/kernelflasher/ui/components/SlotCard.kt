@@ -3,6 +3,7 @@ package com.github.capntrips.kernelflasher.ui.components
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -34,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -54,6 +56,9 @@ fun SlotCard(
     showDlkm: Boolean = true,
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val dividerSpacing = if (isLandscape) 8.dp else 12.dp
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -132,12 +137,12 @@ fun SlotCard(
             }
 
             if (!viewModel.hasError) {
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(dividerSpacing))
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(dividerSpacing))
 
                 // SHA1 & DLKM row
                 Row(
@@ -217,7 +222,7 @@ fun SlotCard(
                 }
 
                 if (isSlotScreen && viewModel.kernelVersion != null) {
-                    Spacer(Modifier.height(6.dp))
+                    Spacer(Modifier.height(if (isLandscape) 6.dp else 10.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically

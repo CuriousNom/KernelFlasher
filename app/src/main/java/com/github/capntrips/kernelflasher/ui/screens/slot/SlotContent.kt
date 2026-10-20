@@ -1,5 +1,6 @@
 package com.github.capntrips.kernelflasher.ui.screens.slot
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -30,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.ExperimentalUnitApi
@@ -50,6 +52,12 @@ fun ColumnScope.SlotContent(
     navController: NavController
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val sectionSpacing = if (isLandscape) 12.dp else 18.dp
+    val buttonHeight = if (isLandscape) 44.dp else 48.dp
+    val checkBtnHeight = if (isLandscape) 42.dp else 46.dp
+
     val title = stringResource(
         if (slotSuffix == "_a") R.string.slot_a
         else if (slotSuffix == "_b") R.string.slot_b
@@ -65,7 +73,7 @@ fun ColumnScope.SlotContent(
 
     AnimatedVisibility(!viewModel.isRefreshing) {
         Column {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(sectionSpacing))
 
             DataCard(
                 title = stringResource(R.string.actions),
@@ -76,7 +84,7 @@ fun ColumnScope.SlotContent(
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(44.dp)
+                            .height(buttonHeight)
                             .pressScale(flashSource, scaleDown = 0.96f),
                         interactionSource = flashSource,
                         shape = RoundedCornerShape(14.dp),
@@ -106,7 +114,7 @@ fun ColumnScope.SlotContent(
                         FilledTonalButton(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(44.dp)
+                                .height(buttonHeight)
                                 .pressScale(backupSource, scaleDown = 0.95f),
                             interactionSource = backupSource,
                             shape = RoundedCornerShape(14.dp),
@@ -135,7 +143,7 @@ fun ColumnScope.SlotContent(
                         FilledTonalButton(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(44.dp)
+                                .height(buttonHeight)
                                 .pressScale(restoreSource, scaleDown = 0.95f),
                             interactionSource = restoreSource,
                             shape = RoundedCornerShape(14.dp),
@@ -158,10 +166,13 @@ fun ColumnScope.SlotContent(
                         }
                     }
 
+                    val checkSource = remember { MutableInteractionSource() }
                     FilledTonalButton(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(42.dp),
+                            .height(checkBtnHeight)
+                            .pressScale(checkSource, scaleDown = 0.96f),
+                        interactionSource = checkSource,
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.filledTonalButtonColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -184,7 +195,7 @@ fun ColumnScope.SlotContent(
             }
 
             if (viewModel.hasVendorDlkm) {
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(sectionSpacing))
                 DataCard(
                     title = stringResource(R.string.vendor_dlkm),
                     icon = Icons.Rounded.Layers

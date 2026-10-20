@@ -3,10 +3,12 @@ package com.github.capntrips.kernelflasher.ui.screens.main
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,7 +37,6 @@ import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.material.icons.rounded.PowerSettingsNew
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material.icons.rounded.SystemUpdate
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -49,6 +50,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -70,6 +72,14 @@ fun ColumnScope.MainContent(
     navController: NavController
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val cardSpacing = if (isLandscape) 10.dp else 16.dp
+    val sectionSpacing = if (isLandscape) 12.dp else 20.dp
+    val dividerSpacing = if (isLandscape) 10.dp else 14.dp
+    val rowSpacing = if (isLandscape) 8.dp else 12.dp
+    val buttonHeight = if (isLandscape) 44.dp else 48.dp
+    val diagButtonHeight = if (isLandscape) 38.dp else 42.dp
 
     // Balanced Device Information Card
     Card(
@@ -91,14 +101,14 @@ fun ColumnScope.MainContent(
                     Surface(
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(if (isLandscape) 36.dp else 40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Rounded.Smartphone,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(if (isLandscape) 20.dp else 22.dp)
                             )
                         }
                     }
@@ -144,12 +154,12 @@ fun ColumnScope.MainContent(
                 }
             }
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(dividerSpacing))
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(dividerSpacing))
 
             // Metadata info row: Build ID & Slot
             Row(
@@ -204,7 +214,7 @@ fun ColumnScope.MainContent(
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(rowSpacing))
 
             // Kernel Version row
             Row(
@@ -251,7 +261,7 @@ fun ColumnScope.MainContent(
         }
     }
 
-    Spacer(Modifier.height(10.dp))
+    Spacer(Modifier.height(cardSpacing))
 
     // Slot A Card
     SlotCard(
@@ -262,7 +272,7 @@ fun ColumnScope.MainContent(
 
     // Slot B Card (if A/B device)
     if (viewModel.isAb) {
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(cardSpacing))
         SlotCard(
             title = stringResource(R.string.slot_b),
             viewModel = viewModel.slotB!!,
@@ -270,7 +280,7 @@ fun ColumnScope.MainContent(
         )
     }
 
-    Spacer(Modifier.height(12.dp))
+    Spacer(Modifier.height(sectionSpacing))
 
     // Balanced Quick Actions Row
     AnimatedVisibility(!viewModel.isRefreshing) {
@@ -293,7 +303,7 @@ fun ColumnScope.MainContent(
                 FilledTonalButton(
                     modifier = Modifier
                         .weight(1f)
-                        .height(44.dp)
+                        .height(buttonHeight)
                         .pressScale(backupsSource, scaleDown = 0.95f),
                     interactionSource = backupsSource,
                     shape = RoundedCornerShape(14.dp),
@@ -322,7 +332,7 @@ fun ColumnScope.MainContent(
                 FilledTonalButton(
                     modifier = Modifier
                         .weight(1f)
-                        .height(44.dp)
+                        .height(buttonHeight)
                         .pressScale(updatesSource, scaleDown = 0.95f),
                     interactionSource = updatesSource,
                     shape = RoundedCornerShape(14.dp),
@@ -351,7 +361,7 @@ fun ColumnScope.MainContent(
                 FilledTonalButton(
                     modifier = Modifier
                         .weight(1f)
-                        .height(44.dp)
+                        .height(buttonHeight)
                         .pressScale(rebootSource, scaleDown = 0.95f),
                     interactionSource = rebootSource,
                     shape = RoundedCornerShape(14.dp),
@@ -376,7 +386,7 @@ fun ColumnScope.MainContent(
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(cardSpacing))
         }
     }
 
@@ -407,7 +417,7 @@ fun ColumnScope.MainContent(
                 )
             }
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(dividerSpacing))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -418,6 +428,7 @@ fun ColumnScope.MainContent(
                         modifier = Modifier.weight(1f),
                         label = stringResource(R.string.save_ramoops),
                         icon = Icons.Rounded.Memory,
+                        height = diagButtonHeight,
                         onClick = { viewModel.saveRamoops(context) }
                     )
                 }
@@ -425,12 +436,14 @@ fun ColumnScope.MainContent(
                     modifier = Modifier.weight(1f),
                     label = stringResource(R.string.save_dmesg),
                     icon = Icons.Rounded.Description,
+                    height = diagButtonHeight,
                     onClick = { viewModel.saveDmesg(context) }
                 )
                 CompactDiagnosticsButton(
                     modifier = Modifier.weight(1f),
                     label = stringResource(R.string.save_logcat),
                     icon = Icons.AutoMirrored.Rounded.Article,
+                    height = diagButtonHeight,
                     onClick = { viewModel.saveLogcat(context) }
                 )
             }
@@ -443,10 +456,15 @@ private fun CompactDiagnosticsButton(
     modifier: Modifier = Modifier,
     label: String,
     icon: ImageVector,
+    height: androidx.compose.ui.unit.Dp = 38.dp,
     onClick: () -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     FilledTonalButton(
-        modifier = modifier.height(38.dp),
+        modifier = modifier
+            .height(height)
+            .pressScale(interactionSource, scaleDown = 0.95f),
+        interactionSource = interactionSource,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.filledTonalButtonColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
