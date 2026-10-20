@@ -57,6 +57,7 @@ fun RefreshableScreen(
         viewModel.refresh(context)
     })
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             Box(
                 Modifier
