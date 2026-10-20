@@ -94,27 +94,38 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun copyAsset(filename: String) {
-        val dest = File(filesDir, filename)
-        assets.open(filename).use { inputStream ->
-            dest.outputStream().use { outputStream ->
-                inputStream.copyTo(outputStream)
-            }
-        }
-        Shell.cmd("chmod +x $dest").exec()
-    }
+    private fun ensureBinaries() {
+        val binaries = listOf("lptools_static", "httools_static", "magiskboot")
+        val filesToChmod = mutableListOf<String>()
 
-    private fun copyNativeBinary(filename: String) {
-        val binary = File(applicationInfo.nativeLibraryDir, "lib$filename.so")
-        println("binary: $binary")
-        val dest = File(filesDir, filename)
-        println("dest: $dest")
-        binary.inputStream().use { inputStream ->
-            dest.outputStream().use { outputStream ->
-                inputStream.copyTo(outputStream)
+        for (filename in binaries) {
+            val binary = File(applicationInfo.nativeLibraryDir, "lib$filename.so")
+            val dest = File(filesDir, filename)
+            if (!dest.exists() || dest.length() != binary.length() || !dest.canExecute()) {
+                binary.inputStream().use { inputStream ->
+                    dest.outputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+                dest.setExecutable(true, false)
+                filesToChmod.add(dest.absolutePath)
             }
         }
-        Shell.cmd("chmod +x $dest").exec()
+
+        val scriptDest = File(filesDir, "flash_ak3.sh")
+        if (!scriptDest.exists() || scriptDest.length() == 0L || !scriptDest.canExecute()) {
+            assets.open("flash_ak3.sh").use { inputStream ->
+                scriptDest.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+            scriptDest.setExecutable(true, false)
+            filesToChmod.add(scriptDest.absolutePath)
+        }
+
+        if (filesToChmod.isNotEmpty()) {
+            Shell.cmd("chmod 755 " + filesToChmod.joinToString(" ")).exec()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -172,11 +183,7 @@ class MainActivity : ComponentActivity() {
 
     fun onAidlConnected(fileSystemManager: FileSystemManager) {
         try {
-            Shell.cmd("cd $filesDir").exec()
-            copyNativeBinary("lptools_static") // v20220825
-            copyNativeBinary("httools_static") // v3.2.0
-            copyNativeBinary("magiskboot") // v30.7
-            copyAsset("flash_ak3.sh")
+            ensureBinaries()
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
             setContent {
@@ -184,6 +191,7 @@ class MainActivity : ComponentActivity() {
                     ErrorScreen(e.message!!)
                 }
             }
+            return
         }
         setContent {
             val navController = rememberNavController()

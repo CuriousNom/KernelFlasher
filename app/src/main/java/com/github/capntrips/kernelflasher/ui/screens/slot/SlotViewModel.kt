@@ -265,13 +265,15 @@ class SlotViewModel(
     }
 
     private fun isPartitionMounted(partition: File): Boolean {
-        @Suppress("LiftReturnOrAssignment")
-        if (partition.exists()) {
+        if (!partition.exists()) return false
+        return try {
+            val resolvedPath = partition.canonicalPath
+            val mounts = File("/proc/mounts").readText()
+            mounts.contains(resolvedPath) || mounts.contains(partition.path)
+        } catch (_: Exception) {
             val dmPath = Shell.cmd("readlink -f $partition").exec().out.firstOrNull() ?: partition.path
             val mounts = Shell.cmd("mount | grep -w $dmPath").exec().out
-            return mounts.isNotEmpty()
-        } else {
-            return false
+            mounts.isNotEmpty()
         }
     }
 

@@ -28,15 +28,17 @@ object PartitionUtil {
 
     private var fileSystemManager: FileSystemManager? = null
     private var bootParent: File? = null
+    private val fstabCache = mutableMapOf<String, FstabEntry?>()
 
-    fun init(context: Context, fileSystemManager: FileSystemManager) {
+    fun init(context: Context, fileSystemManager: FileSystemManager, slotSuffix: String? = null) {
         this.fileSystemManager = fileSystemManager
         AvailablePartitions.clear()
+        fstabCache.clear()
         val fstabEntry = findPartitionFstabEntry(context, "boot")
         if (fstabEntry != null) {
             bootParent = File(fstabEntry.blkDevice).parentFile
         }
-        val activeSlotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out.firstOrNull() ?: ""
+        val activeSlotSuffix = slotSuffix ?: (Shell.cmd("getprop ro.boot.slot_suffix").exec().out.firstOrNull() ?: "")
         for (partitionName in PartitionNames) {
             val blockDevice = findPartitionBlockDevice(context, partitionName, activeSlotSuffix)
             if (blockDevice != null && blockDevice.exists()) {
@@ -46,12 +48,22 @@ object PartitionUtil {
     }
 
     private fun findPartitionFstabEntry(context: Context, partitionName: String): FstabEntry? {
+        if (fstabCache.containsKey(partitionName)) {
+            return fstabCache[partitionName]
+        }
         val httools = File(context.filesDir, "httools_static")
         val result = Shell.cmd("$httools dump $partitionName").exec().out
-        if (result.isNotEmpty()) {
-            return Json.decodeFromString<FstabEntry>(result[0])
+        val entry = if (result.isNotEmpty()) {
+            try {
+                Json.decodeFromString<FstabEntry>(result[0])
+            } catch (_: Exception) {
+                null
+            }
+        } else {
+            null
         }
-        return null
+        fstabCache[partitionName] = entry
+        return entry
     }
 
     fun isPartitionLogical(context: Context, partitionName: String): Boolean {
