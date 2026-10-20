@@ -1,11 +1,11 @@
 package com.github.capntrips.kernelflasher.ui.screens.backups
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,23 +13,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.FolderOff
 import androidx.compose.material.icons.rounded.PowerSettingsNew
 import androidx.compose.material.icons.rounded.Restore
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +54,7 @@ import com.github.capntrips.kernelflasher.ui.components.SlotCard
 import com.github.capntrips.kernelflasher.ui.components.ViewButton
 import com.github.capntrips.kernelflasher.ui.screens.slot.SlotViewModel
 
+@OptIn(ExperimentalLayoutApi::class)
 @ExperimentalMaterial3Api
 @ExperimentalUnitApi
 @Composable
@@ -129,8 +130,8 @@ fun ColumnScope.SlotBackupsContent(
                                 Button(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(50.dp),
-                                    shape = RoundedCornerShape(24.dp),
+                                        .height(48.dp),
+                                    shape = RoundedCornerShape(16.dp),
                                     onClick = {
                                         navController.navigate("slot$slotSuffix/backups/${backupsViewModel.currentBackup!!}/restore")
                                     }
@@ -138,7 +139,7 @@ fun ColumnScope.SlotBackupsContent(
                                     Icon(
                                         imageVector = Icons.Rounded.Restore,
                                         contentDescription = null,
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(18.dp)
                                     )
                                     Spacer(Modifier.width(8.dp))
                                     Text(
@@ -150,8 +151,8 @@ fun ColumnScope.SlotBackupsContent(
                                 Button(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(50.dp),
-                                    shape = RoundedCornerShape(24.dp),
+                                        .height(48.dp),
+                                    shape = RoundedCornerShape(16.dp),
                                     onClick = {
                                         slotViewModel.flashAk3(context, backupsViewModel.currentBackup!!, currentBackup.filename!!)
                                         navController.navigate("slot$slotSuffix/backups/${backupsViewModel.currentBackup!!}/flash/ak3") {
@@ -162,7 +163,7 @@ fun ColumnScope.SlotBackupsContent(
                                     Icon(
                                         imageVector = Icons.Rounded.Bolt,
                                         contentDescription = null,
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(18.dp)
                                     )
                                     Spacer(Modifier.width(8.dp))
                                     Text(
@@ -176,7 +177,7 @@ fun ColumnScope.SlotBackupsContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),
-                            shape = RoundedCornerShape(20.dp),
+                            shape = RoundedCornerShape(16.dp),
                             colors = ButtonDefaults.filledTonalButtonColors(
                                 containerColor = MaterialTheme.colorScheme.errorContainer,
                                 contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -250,50 +251,31 @@ fun ColumnScope.SlotBackupsContent(
         ) {
             val currentBackup = backupsViewModel.backups.getValue(backupsViewModel.currentBackup!!)
             if (currentBackup.hashes != null) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     for (partitionName in PartitionUtil.PartitionNames) {
                         val hash = currentBackup.hashes.get(partitionName)
                         if (hash != null) {
                             val isSelected = backupsViewModel.backupPartitions[partitionName] == true
-                            Surface(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        backupsViewModel.backupPartitions[partitionName] = !isSelected
-                                    },
-                                shape = RoundedCornerShape(16.dp),
-                                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                                border = androidx.compose.foundation.BorderStroke(
-                                    1.dp,
-                                    if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                                    else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 14.dp, vertical = 8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Checkbox(
-                                        checked = isSelected,
-                                        onCheckedChange = { checked ->
-                                            backupsViewModel.backupPartitions[partitionName] = checked
-                                        },
-                                        colors = CheckboxDefaults.colors(
-                                            checkedColor = MaterialTheme.colorScheme.primary
+                            FilterChip(
+                                selected = isSelected,
+                                onClick = {
+                                    backupsViewModel.backupPartitions[partitionName] = !isSelected
+                                },
+                                label = { Text(partitionName) },
+                                leadingIcon = if (isSelected) {
+                                    {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Check,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(FilterChipDefaults.IconSize)
                                         )
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        text = partitionName,
-                                        style = MaterialTheme.typography.titleSmall.copy(
-                                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
-                                        ),
-                                        color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
-                            }
+                                    }
+                                } else null
+                            )
                         }
                     }
                 }
@@ -306,12 +288,12 @@ fun ColumnScope.SlotBackupsContent(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(14.dp))
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(24.dp),
+                    .height(48.dp),
+                shape = RoundedCornerShape(16.dp),
                 onClick = {
                     backupsViewModel.restore(context, slotSuffix)
                     navController.navigate("slot$slotSuffix/backups/${backupsViewModel.currentBackup!!}/restore/restore") {
@@ -323,7 +305,7 @@ fun ColumnScope.SlotBackupsContent(
                 Icon(
                     imageVector = Icons.Rounded.Restore,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
@@ -343,18 +325,14 @@ fun ColumnScope.SlotBackupsContent(
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            ),
+                                .height(48.dp),
+                            shape = RoundedCornerShape(16.dp),
                             onClick = { navController.navigate("reboot") }
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.PowerSettingsNew,
                                 contentDescription = null,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(18.dp)
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
