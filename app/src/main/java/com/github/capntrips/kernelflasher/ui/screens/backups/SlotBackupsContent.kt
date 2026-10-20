@@ -69,7 +69,7 @@ fun ColumnScope.SlotBackupsContent(
                 if (currentBackup.type == "raw") {
                     DataRow(
                         label = stringResource(R.string.boot_sha1),
-                        value = currentBackup.bootSha1!!.substring(0, 8),
+                        value = currentBackup.bootSha1?.take(8) ?: "",
                         valueStyle = MaterialTheme.typography.titleSmall.copy(
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Medium
@@ -84,7 +84,7 @@ fun ColumnScope.SlotBackupsContent(
                                 if (hash != null) {
                                     DataRow(
                                         label = partitionName,
-                                        value = hash.substring(0, 8),
+                                        value = hash.take(8),
                                         valueStyle = MaterialTheme.typography.titleSmall.copy(
                                             fontFamily = FontFamily.Monospace,
                                             fontWeight = FontWeight.Medium
