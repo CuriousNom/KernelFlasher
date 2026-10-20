@@ -264,7 +264,7 @@ class SlotViewModel(
     private fun isPartitionMounted(partition: File): Boolean {
         @Suppress("LiftReturnOrAssignment")
         if (partition.exists()) {
-            val dmPath = Shell.cmd("readlink -f $partition").exec().out[0]
+            val dmPath = Shell.cmd("readlink -f $partition").exec().out.firstOrNull() ?: partition.path
             val mounts = Shell.cmd("mount | grep -w $dmPath").exec().out
             return mounts.isNotEmpty()
         } else {
@@ -429,7 +429,7 @@ class SlotViewModel(
     }
 
     private fun resetSlot() {
-        val activeSlotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out[0]
+        val activeSlotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out.firstOrNull() ?: ""
         val newSlot = if (activeSlotSuffix == "_a") "_b" else "_a"
         Shell.cmd("magisk resetprop -n ro.boot.slot_suffix $newSlot").exec()
         wasSlotReset = !wasSlotReset

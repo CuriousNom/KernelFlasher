@@ -31,11 +31,12 @@ object PartitionUtil {
 
     fun init(context: Context, fileSystemManager: FileSystemManager) {
         this.fileSystemManager = fileSystemManager
+        AvailablePartitions.clear()
         val fstabEntry = findPartitionFstabEntry(context, "boot")
         if (fstabEntry != null) {
             bootParent = File(fstabEntry.blkDevice).parentFile
         }
-        val activeSlotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out[0]
+        val activeSlotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out.firstOrNull() ?: ""
         for (partitionName in PartitionNames) {
             val blockDevice = findPartitionBlockDevice(context, partitionName, activeSlotSuffix)
             if (blockDevice != null && blockDevice.exists()) {
@@ -75,11 +76,14 @@ object PartitionUtil {
         if (blockDevice == null || !blockDevice.exists()) {
             val siblingDevice = if (bootParent != null) fileSystemManager!!.getFile(bootParent!!, "$partitionName$slotSuffix") else null
             val physicalDevice = fileSystemManager!!.getFile("/dev/block/by-name/$partitionName$slotSuffix")
+            val bootdeviceDevice = fileSystemManager!!.getFile("/dev/block/bootdevice/by-name/$partitionName$slotSuffix")
             val logicalDevice = fileSystemManager!!.getFile("/dev/block/mapper/$partitionName$slotSuffix")
             if (siblingDevice?.exists() == true) {
-                blockDevice = physicalDevice
+                blockDevice = siblingDevice
             } else if (physicalDevice.exists()) {
                 blockDevice = physicalDevice
+            } else if (bootdeviceDevice.exists()) {
+                blockDevice = bootdeviceDevice
             } else if (logicalDevice.exists()) {
                 blockDevice = logicalDevice
             }
@@ -95,8 +99,8 @@ object PartitionUtil {
     }
 
     fun flashBlockDevice(image: ExtendedFile, blockDevice: ExtendedFile, hashAlgorithm: String): String {
-        val partitionSize = Shell.cmd("wc -c < $blockDevice").exec().out[0].toUInt()
-        val imageSize = Shell.cmd("wc -c < $image").exec().out[0].toUInt()
+        val partitionSize = Shell.cmd("wc -c < $blockDevice").exec().out.firstOrNull()?.trim()?.toULongOrNull() ?: 0UL
+        val imageSize = Shell.cmd("wc -c < $image").exec().out.firstOrNull()?.trim()?.toULongOrNull() ?: 0UL
         if (partitionSize < imageSize) {
             throw Error("Partition ${blockDevice.name} is smaller than image")
         }
@@ -116,7 +120,7 @@ object PartitionUtil {
 
     @Suppress("SameParameterValue")
     fun flashLogicalPartition(context: Context, image: ExtendedFile, blockDevice: ExtendedFile, partitionName: String, slotSuffix: String, hashAlgorithm: String, addMessage: (message: String) -> Unit): String {
-        val sourceFileSize = Shell.cmd("wc -c < $image").exec().out[0].toUInt()
+        val sourceFileSize = Shell.cmd("wc -c < $image").exec().out.firstOrNull()?.trim()?.toULongOrNull() ?: 0UL
         val lptools = File(context.filesDir, "lptools_static")
         Shell.cmd("$lptools remove ${partitionName}_kf").exec()
         if (Shell.cmd("$lptools create ${partitionName}_kf $sourceFileSize").exec().isSuccess) {

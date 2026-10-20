@@ -58,8 +58,8 @@ class MainViewModel(
 
     init {
         PartitionUtil.init(context, fileSystemManager)
-        kernelVersion = Shell.cmd("echo $(uname -r) $(uname -v)").exec().out[0]
-        slotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out[0]
+        kernelVersion = Shell.cmd("echo $(uname -r) $(uname -v)").exec().out.firstOrNull() ?: ""
+        slotSuffix = Shell.cmd("getprop ro.boot.slot_suffix").exec().out.firstOrNull() ?: ""
         backups = BackupsViewModel(context, fileSystemManager, navController, _isRefreshing, _backups)
         updates = UpdatesViewModel(context, fileSystemManager, navController, _isRefreshing)
         reboot = RebootViewModel(context, fileSystemManager, navController, _isRefreshing)
